@@ -1,19 +1,16 @@
 replicaCount: 1
 
 backend:
-  image: backend-image:latest
+  image: login-app-backend:1.0.0
   port: 3000
 
 frontend:
-  image: frontend-image:latest
+  image: login-app-frontend:1.0.0
   port: 80
 
 database:
-  image: postgres:latest
+  image: login-app-database:1.0.0 
   port: 5432
-  env:
-    POSTGRES_USER: "admin"
-    POSTGRES_PASSWORD: "admin"
   persistence:
     enabled: true
     storageClass: standard

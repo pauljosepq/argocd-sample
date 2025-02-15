@@ -1,5 +1,5 @@
 {
-  "name": "argocd-sample",
+  "name": "login-app-sample",
   "private": true,
   "workspaces": [
     "backend",

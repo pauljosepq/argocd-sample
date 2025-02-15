@@ -9,10 +9,12 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/pauljosepq/argocd-sample
+    repoURL: https://github.com/pauljosepq/login-app-sample
     path: helm
-    targetRevision: HEAD
+    targetRevision: main
   syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
     automated:
       prune: true
       selfHeal: true
