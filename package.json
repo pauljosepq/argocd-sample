@@ -1,0 +1,12 @@
+{
+  "name": "argocd-sample",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run --workspace=backend start",
+    "dev:frontend": "npm run --workspace=frontend dev"
+  }
+}

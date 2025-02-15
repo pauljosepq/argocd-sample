@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: login-app-dev
+  namespace: argocd
+spec:
+  destination:
+    namespace: dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/pauljosepq/argocd-sample
+    path: helm
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
