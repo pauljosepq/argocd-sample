@@ -12,6 +12,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Check if frontend folder was modified
+      id: check-frontend
+      run: |
+        git diff --exit-code --quiet HEAD^ HEAD frontend || echo "frontend changed"
+
+    - name: Check if backend folder was modified
+      id: check-backend
+      run: |
+        git diff --exit-code --quiet HEAD^ HEAD backend || echo "backend changed"
+
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v2
       with:
@@ -20,14 +30,17 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build the Frontend Docker image
+      if: steps.check-frontend.outputs.stdout == 'frontend changed'
       run: docker build . --file Dockerfiles/frontend.Dockerfile --tag ghcr.io/pauljosepq/login-app-frontend:${{ github.ref_name }}
 
     - name: Push the Frontend Docker image to GitHub Container Registry
+      if: steps.check-frontend.outputs.stdout == 'frontend changed'
       run: docker push ghcr.io/pauljosepq/login-app-frontend:${{ github.ref_name }}
 
     - name: Build the Backend Docker image
+      if: steps.check-backend.outputs.stdout == 'backend changed'
       run: docker build . --file Dockerfiles/backend.Dockerfile --tag ghcr.io/pauljosepq/login-app-backend:${{ github.ref_name }}
 
     - name: Push the Backend Docker image to GitHub Container Registry
-      run: docker push ghcr.io/pauljosepq/login-app-frontend:${{ github.ref_name }}
-
+      if: steps.check-backend.outputs.stdout == 'backend changed'
+      run: docker push ghcr.io/pauljosepq/login-app-backend:${{ github.ref_name }}
