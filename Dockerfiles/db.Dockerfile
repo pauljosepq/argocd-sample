@@ -1,4 +1,4 @@
-FROM postgres:latest
+FROM postgres:13-alpine
 
 # Set environment variables for PostgreSQL
 ENV POSTGRES_USER=admin

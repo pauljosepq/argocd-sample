@@ -1,0 +1,43 @@
+services:
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/frontend.Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+    networks:
+      - login-app-net
+
+  backend:
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/backend.Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://admin:admin@db:5432/login_db
+    networks:
+      - login-app-net
+
+  db:
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/db.Dockerfile
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - login-app-net
+
+networks:
+  login-app-net:
+    driver: bridge
+
+volumes:
+  db-data:

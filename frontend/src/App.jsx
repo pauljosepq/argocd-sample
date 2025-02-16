@@ -9,7 +9,7 @@ function App() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/login', { email, password });
+      const response = await axios.post('/api/login', { email, password });
       alert(response.data.message);
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');

@@ -13,8 +13,13 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
+// Home
+app.get('/health', async (req, res) => {
+  res.send('<h1>TAMO ARRIBA</h1>').statusCode(200);
+});
+
 // Login API
-app.post('/api/login', async (req, res) => {
+app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
