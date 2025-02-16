@@ -13,6 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -23,6 +24,7 @@ a:hover {
 }
 
 body {
+  font-family: Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   display: flex;
   place-items: center;

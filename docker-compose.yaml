@@ -19,14 +19,16 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgres://admin:admin@db:5432/login_db
+      - PORT=3000
+      - DATABASE_URL=postgres://admin:admin@localhost:5432/login_db
+      - JWT_SECRET=your_secret_key
     networks:
       - login-app-net
 
   db:
     build: 
-      context: .
-      dockerfile: ./Dockerfiles/db.Dockerfile
+      context: ./Dockerfiles
+      dockerfile: ./db.Dockerfile
     restart: always
     ports:
       - "5432:5432"

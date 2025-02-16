@@ -15,7 +15,7 @@ const pool = new Pool({
 
 // Home
 app.get('/health', async (req, res) => {
-  res.send('<h1>TAMO ARRIBA</h1>').statusCode(200);
+  res.send('<h1>TAMO ARRIBA</h1>').status(200);
 });
 
 // Login API
