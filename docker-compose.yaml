@@ -17,23 +17,23 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - database
     environment:
       - PORT=3000
-      - DATABASE_URL=postgres://admin:admin@localhost:5432/login_db
+      - MONGODB_URI=mongodb://admin:admin@database:27017
       - JWT_SECRET=your_secret_key
     networks:
       - login-app-net
 
-  db:
-    build: 
-      context: ./Dockerfiles
-      dockerfile: ./db.Dockerfile
-    restart: always
+  database:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
     ports:
-      - "5432:5432"
+      - "27017:27017"
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - mongodb-data:/data/db
     networks:
       - login-app-net
 
@@ -42,4 +42,4 @@ networks:
     driver: bridge
 
 volumes:
-  db-data:
+  mongodb-data:

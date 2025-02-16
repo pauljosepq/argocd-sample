@@ -1,19 +1,38 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { Pool } = require('pg');
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-});
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(async () => {
+    console.log('MongoDB connected');
 
-// Home
+    const adminUser = await User.findOne({ email: 'admin@admin.com' });
+    if (!adminUser) {
+      const newUser = new User({
+        email: 'admin@admin.com',
+        password: 'admin',
+      });
+
+      await newUser.save();
+      console.log('Admin user created');
+    }
+  })
+  .catch(err => console.log(err));
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+});
+  
+const User = mongoose.model('User', userSchema);
+
+// Home route
 app.get('/health', async (req, res) => {
   res.send('<h1>TAMO ARRIBA</h1>').status(200);
 });
@@ -22,16 +41,15 @@ app.get('/health', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (result.rows.length === 0) return res.status(400).json({ message: 'User not found' });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'User not found' });
 
-    const user = result.rows[0];
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = password === user.password;
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ message: 'Login successful', token });
+    res.json({ message: 'Login successful' });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
