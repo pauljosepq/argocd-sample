@@ -18,12 +18,20 @@ jobs:
     - name: Check if frontend folder was modified
       id: check-frontend
       run: |
-        git diff --exit-code --quiet HEAD~1 HEAD -- frontend || echo "frontend changed"
+        if git diff --exit-code --quiet HEAD~1 HEAD -- frontend ; then
+          echo "frontend=" >> $GITHUB_ENV
+        else
+          echo "frontend=changed" >> $GITHUB_ENV
+        fi
 
     - name: Check if backend folder was modified
       id: check-backend
       run: |
-        git diff --exit-code --quiet HEAD~1 HEAD -- backend || echo "backend changed"
+        if git diff --exit-code --quiet HEAD~1 HEAD -- backend ; then
+          echo "backend=" >> $GITHUB_ENV
+        else
+          echo "backend=changed" >> $GITHUB_ENV
+        fi
 
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v2
@@ -33,17 +41,17 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build the Frontend Docker image
-      if: contains(steps.check-frontend.outputs.stdout, 'frontend changed')
+      if: contains(env.frontend, 'frontend changed')
       run: docker build . --file Dockerfiles/frontend.Dockerfile --tag ghcr.io/pauljosepq/login-app-frontend:${{ github.ref_name }}
 
     - name: Push the Frontend Docker image to GitHub Container Registry
-      if: contains(steps.check-frontend.outputs.stdout, 'frontend changed')
+      if: contains(env.frontend, 'frontend changed')
       run: docker push ghcr.io/pauljosepq/login-app-frontend:${{ github.ref_name }}
 
     - name: Build the Backend Docker image
-      if: contains(steps.check-backend.outputs.stdout, 'backend changed')
+      if: contains(env.backend, 'backend changed')
       run: docker build . --file Dockerfiles/backend.Dockerfile --tag ghcr.io/pauljosepq/login-app-backend:${{ github.ref_name }}
 
     - name: Push the Backend Docker image to GitHub Container Registry
-      if: contains(steps.check-backend.outputs.stdout, 'backend changed')
+      if: contains(env.backend, 'backend changed')
       run: docker push ghcr.io/pauljosepq/login-app-backend:${{ github.ref_name }}
