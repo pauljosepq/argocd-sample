@@ -2,6 +2,7 @@ name: Docker Image CI
 
 on:
   release:
+    types: [released]
     tags:
       - '*.*.*'
 
