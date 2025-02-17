@@ -33,17 +33,17 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build the Frontend Docker image
-      if: steps.check-frontend.outputs.stdout == 'frontend changed'
+      if: contains(steps.check-frontend.outputs.stdout, 'frontend changed')
       run: docker build . --file Dockerfiles/frontend.Dockerfile --tag ghcr.io/pauljosepq/login-app-frontend:${{ github.ref_name }}
 
     - name: Push the Frontend Docker image to GitHub Container Registry
-      if: steps.check-frontend.outputs.stdout == 'frontend changed'
+      if: contains(steps.check-frontend.outputs.stdout, 'frontend changed')
       run: docker push ghcr.io/pauljosepq/login-app-frontend:${{ github.ref_name }}
 
     - name: Build the Backend Docker image
-      if: steps.check-backend.outputs.stdout == 'backend changed'
+      if: contains(steps.check-backend.outputs.stdout, 'backend changed')
       run: docker build . --file Dockerfiles/backend.Dockerfile --tag ghcr.io/pauljosepq/login-app-backend:${{ github.ref_name }}
 
     - name: Push the Backend Docker image to GitHub Container Registry
-      if: steps.check-backend.outputs.stdout == 'backend changed'
+      if: contains(steps.check-backend.outputs.stdout, 'backend changed')
       run: docker push ghcr.io/pauljosepq/login-app-backend:${{ github.ref_name }}
