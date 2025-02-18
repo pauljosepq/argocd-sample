@@ -6,13 +6,17 @@ function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('/api/login', { email, password });
-      alert(response.data.message);
+      const response = await axios.post('/api/login', { email, password }, {timeout: 2000});
+      setLoggedIn(response.status === 200);
+      setError('');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      console.error(err);
+      setError(err.response?.data?.message || err.message || 'Login failed');
+      setLoggedIn(false);
     }
   };
 
@@ -28,13 +32,15 @@ function App() {
           <div className='d-flex flex-column justify-content-center h-custom-2 w-75 pt-4'>
             <h3 className="fw-normal mb-3 ps-5 pb-3" style={{ letterSpacing: '1px' }}>Log in</h3>
 
-            {error && <p className="text-danger ps-5">{error}</p>}
+            {error &&
+               <p className="text-danger ps-5">{error}</p>}
+            {loggedIn && <p className="text-success ps-5">Logged in successfully!</p>}
 
             <MDBInput wrapperClass='mb-4 mx-5 w-100' label='Email address' type='email' size="lg"
-              value={email} onChange={(e) => setEmail(e.target.value)}
+              value={email} placeholder='admin@admin.com' onChange={(e) => setEmail(e.target.value)}
             />
             <MDBInput wrapperClass='mb-4 mx-5 w-100' label='Password' type='password' size="lg"
-              value={password} onChange={(e) => setPassword(e.target.value)}
+              value={password} placeholder='admin' onChange={(e) => setPassword(e.target.value)}
             />
 
             <MDBBtn className="mb-4 px-5 mx-5 w-100" color='info' size='lg' onClick={handleLogin}>

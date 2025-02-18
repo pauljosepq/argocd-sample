@@ -7,6 +7,16 @@ services:
       - "4000:4000"
     depends_on:
       - backend
+    # Copy the Nginx configuration file
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+    healthcheck:
+      # Use healthcheck instead of readinessProbe for Docker Compose
+      test: [ "CMD-SHELL", "curl -f http://backend:3000/health || exit 1" ] # Check /health
+      interval: 10s # Check every 10 seconds
+      timeout: 5s # Timeout after 5 seconds
+      retries: 5 # Retry 5 times before considering unhealthy
+      start_period: 30s
     networks:
       - login-app-net
 
